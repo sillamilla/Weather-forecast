@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200">
+<div class="container mx-auto px-4 py-8">
+    <div class="mt-4">
+        <h2 class="text-lg font-bold mb-2">Погодные условия</h2>
+        <div id="weather-container">
+
+            {{range .}}
+            <h1 class="text-2xl font-bold mb-4">Погода в определенной области {{.Name}}</h1>
+
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <h2 class="text-lg font-bold mb-2">Координаты</h2>
+                <p><span class="font-bold">Широта:</span> <span id="latitude">{{.Coord.Latitude}}</span></p>
+                <p><span class="font-bold">Долгота:</span> <span id="longitude">{{.Coord.Longitude}}</span></p>
+            </div>
+
+            <div class="bg-gray-100 p-4 rounded-lg mt-4">
+                <h2 class="text-lg font-bold mb-2">Погодные условия</h2>
+                {{range .Weather}}
+                <p><span class="font-bold">Описание:</span> {{.Description}}</p>
+                {{end}}
+                <p><span class="font-bold">Температура:</span> {{.Main.Temp}} °C</p>
+                <p><span class="font-bold">Ощущается как:</span> {{.Main.FeelsLike}} °C</p>
+                <p><span class="font-bold">Влажность:</span> {{.Main.Humidity}}%</p>
+                <p><span class="font-bold">Скорость ветра:</span> {{.Wind.Speed}} м/с</p>
+            </div>
+            {{end}}
+
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
