@@ -1,15 +1,13 @@
 package handler
 
 import (
-	"Weather/internal/handler/ui"
 	"Weather/internal/service"
 	"html/template"
 )
 
 type Handler struct {
-	ServiceStuff service.Service
-	Home         *template.Template
-	srv          *service.Service
+	Home *template.Template
+	srv  *service.Service
 }
 
 func New(srv *service.Service) Handler {
@@ -19,8 +17,7 @@ func New(srv *service.Service) Handler {
 	}
 
 	return Handler{
-		ServiceStuff: ui.NewHandler(*srv), //todo Я ХОЧУ 1 ХЕНДЛЕР
-		Home:         home,
-		srv:          srv,
+		Home: home,
+		srv:  srv,
 	}
 }
