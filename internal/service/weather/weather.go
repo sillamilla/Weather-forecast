@@ -1,11 +1,9 @@
 package weather
 
 import (
-	"Weather/internal/models"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
+	"Weather/internal/config"
+	"Weather/pkg/weather_client/models"
+	"Weather/pkg/weather_client"
 	"os"
 )
 
@@ -14,11 +12,18 @@ type Service interface {
 }
 
 type weatherService struct {
-	ws Service
+	openWeatherClient weatherThirdPartyService
 }
 
-func NewWeatherService(ws Service) Service {
-	return weatherService{ws: ws}
+type weatherThirdPartyService interface {
+	FindLocation(city string) ([]models.GeoLocation, error)
+	WeatherStatus(geoLocation models.GeoLocation) (models.WeatherInfo, error)
+}
+
+func NewWeatherService(service weatherThirdPartyService) Service {
+	return weatherService{
+		openWeatherClient: service,
+	}
 }
 
 var key = os.Getenv("key")
@@ -26,24 +31,6 @@ var key = os.Getenv("key")
 //todo key
 
 func (ws weatherService) WeatherStatus(geoLocation models.GeoLocation) (models.WeatherInfo, error) {
-	url := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s", geoLocation.Lat, geoLocation.Lon, key)
-
-	getResponse, err := http.Get(url)
-	if err != nil {
-		return models.WeatherInfo{}, err
-	}
-	defer getResponse.Body.Close()
-
-	readResponse, err := io.ReadAll(getResponse.Body)
-	if err != nil {
-		return models.WeatherInfo{}, err
-	}
-
-	var weatherInfo models.WeatherInfo
-	err = json.Unmarshal(readResponse, &weatherInfo)
-	if err != nil {
-		return models.WeatherInfo{}, err
-	}
-
+	weatherInfo, err :=
 	return weatherInfo, err
 }

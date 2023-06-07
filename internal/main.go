@@ -1,23 +1,17 @@
 package main
 
 import (
+	"Weather/internal/config"
 	"Weather/internal/handler"
 	"Weather/internal/service"
-	"Weather/internal/service/location"
-	"Weather/internal/service/user"
-	"Weather/internal/service/weather"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
 func main() {
+	srv := service.New()
 
-	sr := &service.Service{
-		UserSrv:     user.NewUserService(nil),
-		LocationSrv: location.NewLocationService(nil),
-		WeatherSrv:  weather.NewWeatherService(nil),
-	}
-	srv := service.New(sr)
+	config.GetConfig().
 
 	r := mux.NewRouter()
 	h := handler.New(srv)
