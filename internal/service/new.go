@@ -1,9 +1,11 @@
 package service
 
 import (
+	"Weather/internal/config"
 	"Weather/internal/service/location"
 	"Weather/internal/service/user"
 	"Weather/internal/service/weather"
+	"Weather/pkg/weather_client"
 )
 
 type Service struct {
@@ -12,10 +14,12 @@ type Service struct {
 	WeatherSrv  weather.Service
 }
 
-func New(sr *Service) *Service {
+func New(cfg config.Config) *Service {
+	client := weather_client.NewClient(cfg.WeatherApiUrl, cfg.WeatherApiToken)
+
 	return &Service{
-		UserSrv:     user.NewUserService(sr.UserSrv),
-		LocationSrv: location.NewLocationService(sr.LocationSrv),
-		WeatherSrv:  weather.NewWeatherService(sr.WeatherSrv),
+		UserSrv:     user.NewUserService(),
+		LocationSrv: location.NewLocationService(),
+		WeatherSrv:  weather.NewWeatherService(client),
 	}
 }

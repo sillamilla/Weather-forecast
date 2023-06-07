@@ -3,6 +3,7 @@ package ui
 import (
 	"Weather/internal/models"
 	"Weather/internal/service"
+	models2 "Weather/pkg/weather_client/models"
 	"fmt"
 	"html/template"
 	"log"
@@ -35,7 +36,7 @@ func (h Handler) MainPageProcess(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	var weathersInfo []models.WeatherInfo
+	var weathersInfo []models2.WeatherInfo
 	var errors []error
 
 	for _, location := range locations {
