@@ -1,13 +1,10 @@
 package location
 
 import (
-	"Weather/internal/config"
+	"Weather/internal/helper"
 	"Weather/internal/models"
-	models2 "Weather/pkg/weather_client/models"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
+	"Weather/pkg/forecast_client"
+	models2 "Weather/pkg/forecast_client/models"
 )
 
 type Service interface {
@@ -15,34 +12,19 @@ type Service interface {
 }
 
 type locationService struct {
+	client forecast_client.Client
 }
 
-func NewLocationService() Service {
-	return locationService{}
+func NewLocationService(client forecast_client.Client) Service {
+	return locationService{client: client}
 }
 
-func (s locationService) FiendLocation(userRequest models.UserRequest) ([]models2.GeoLocation, error) {
-	weatherApiUrl := config.GetConfig().WeatherApiUrl
-	weatherApiToken := config.GetConfig().WeatherApiToken
-
-	url := fmt.Sprintf("%s/geo/1.0/direct?q=%s&limit=5&appid=%s", weatherApiUrl, userRequest.City, weatherApiToken)
-
-	getResponse, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer getResponse.Body.Close()
-
-	readResponse, err := io.ReadAll(getResponse.Body)
+func (ls locationService) FiendLocation(userRequest models.UserRequest) ([]models2.GeoLocation, error) {
+	locations, err := ls.client.FindLocation(userRequest.City)
+	location := helper.SameCheck(locations)
 	if err != nil {
 		return nil, err
 	}
 
-	var locations []models2.GeoLocation
-	err = json.Unmarshal(readResponse, &locations)
-	if err != nil {
-		return nil, err
-	}
-
-	return locations, nil
+	return location, nil
 }

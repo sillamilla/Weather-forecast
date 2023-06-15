@@ -1,42 +1,43 @@
 package helper
 
 import (
-	"Weather/internal/models"
-	"encoding/json"
-	"io"
+	models2 "Weather/pkg/forecast_client/models"
+	"github.com/google/uuid"
 	"net/http"
 )
 
-func ValueFromUrl(url string, information interface{}) error {
-	getResponse, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer getResponse.Body.Close()
+func SameCheck(locationsInfo []models2.GeoLocation) []models2.GeoLocation {
 
-	readResponse, err := io.ReadAll(getResponse.Body)
-	if err != nil {
-		return err
+	sortMap := make(map[string]models2.GeoLocation)
+	for i, value := range locationsInfo {
+		sortMap[value.Name] = locationsInfo[i]
 	}
 
-	err = json.Unmarshal(readResponse, information)
-	if err != nil {
-		return err
+	var location []models2.GeoLocation
+	for _, value := range sortMap {
+		location = append(location, sortMap[value.Name])
 	}
 
-	return nil
+	return location
 }
 
-func SameCheck(weathersInfo []models.WeatherInfo) []models.WeatherInfo {
-	sortMap := make(map[string]models.WeatherInfo)
-	for i, value := range weathersInfo {
-		sortMap[value.Name] = weathersInfo[i]
+func GenerateAndSetCookie(w http.ResponseWriter) string {
+	cookieValue := uuid.New().String()
+
+	cookie := http.Cookie{
+		Name:  "user",
+		Value: cookieValue,
 	}
 
-	var weather []models.WeatherInfo
-	for _, value := range sortMap {
-		weather = append(weather, sortMap[value.Name])
+	http.SetCookie(w, &cookie)
+	return cookie.Value
+}
+
+func GetCookie(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("user")
+	if cookie == nil {
+		return "", err
 	}
 
-	return weather
+	return cookie.Value, nil
 }

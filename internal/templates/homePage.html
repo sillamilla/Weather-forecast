@@ -26,29 +26,56 @@
 
                 <div class="flex justify-center">
                     <div class="w-full">
-                        <input type="text" class="w-full px-4 py-2 rounded-lg" placeholder="Введите название города">
+                        <input type="text" id="cityInput" class="w-full px-4 py-2 rounded-lg" placeholder="Введите название города">
                     </div>
                 </div>
+
+                <script>
+                    const input = document.getElementById('cityInput');
+                    input.addEventListener('keydown', function(event) {
+
+                        if (event.key === 'Enter') {
+                            const cityName = input.value;
+
+                            const link = `/?name=${cityName}`;
+                            window.location.href = link;
+                        }
+                    });
+                </script>
+
 
                 {{range $index, $element := .}}
                 {{if eq $index 0}}
                 <div class="relative " >
                     <div class="bg-blue-700 p-4 rounded-lg mt-4 shadow-2xl">
                         <div class="flex items-center">
-                            <span class="h-8 w-8 text-yellow-500 transition duration-200 focus:outline-none text-2xl hover:text-gray-500 transform hover:scale-125 absolute top-0 right-0" id="star" onclick="toggleNameAndStar('{{.Name}}')">★</span>
+                            <span class="h-8 w-8 text-gray-500 transition duration-200 focus:outline-none text-2xl transform hover:scale-125 absolute top-0 right-0 cursor-pointer" id="star" onclick="toggleNameAndStar('{{.Name}}')">★</span>
                         </div>
+
+
 
                         <script>
                             function toggleNameAndStar(name) {
                                 var starElement = document.getElementById("star");
                                 var nameElement = document.getElementById("name");
 
-                                nameElement.textContent = name;
+                                if (starElement.classList.contains("text-gray-500")) {
+                                    // Звездочка не нажата, добавляем имя и меняем цвет звездочки
+                                    nameElement.textContent = name;
+                                    starElement.classList.remove("text-gray-500");
+                                    starElement.classList.add("text-yellow-500");
 
-                                starElement.classList.add("text-yellow-500");
+                                    window.location.href = '/?name=' + encodeURIComponent(name) + '&pin=' + "1";
+                                } else {
+                                    // Звездочка уже нажата, удаляем имя и меняем цвет звездочки
+                                    nameElement.textContent = "";
+                                    starElement.classList.remove("text-yellow-500");
+                                    starElement.classList.add("text-gray-500");
 
-                                // Можно добавить другую логику для удаления имени и изменения стиля звездочки при повторном клике
+                                    window.location.href = '/?name=' + encodeURIComponent(name) + '&pin=' + "0";
+                                }
                             }
+
                         </script>
 
                         <h2 class="text-lg font-bold mb-2">Погодные условия {{.Name}}</h2>
@@ -72,7 +99,7 @@
                     <h2 class="text-lg font-bold mb-2 mt-2">- - - - - - - - - - - - - - - - Города возле тебя - - - - - - - - - - - - - - - -</h2>
                 </div>
                 {{else}}
-                <div class="relative clickable" onclick="change1('{{ .Name }}')">
+                <div class="relative clickable" onclick="change1('{{ .Name }}, {{ .Coord.Latitude }}, {{ .Coord.Longitude }}')">
                     <div class="bg-gray-100 p-4 rounded-lg mt-4 shadow-2xl hover:bg-gray-300 transition-all">
                         <h2 class="text-lg font-bold mb-2">Погодные условия {{.Name}}</h2>
                         {{range .Weather}}
@@ -91,8 +118,8 @@
                     </div>
                 </div>
                 <script>
-                    function change1(Name) {
-                        window.location.href = '/?name=' + encodeURIComponent(Name);
+                    function change1(Name, Lat, Lon) {
+                        window.location.href = '/?name=' + encodeURIComponent(Name) + '&lat=' + encodeURIComponent(Lat) + '&lon=' + encodeURIComponent(Lon);
                     }
                 </script>
 
@@ -142,8 +169,20 @@
     </div>
 
     <div class="w-2/6 mx-4">
-        <h2 class="text-lg font-semibold mb-2" id="name"></h2>
+        <div class="flex-basis flex-shrink flex-grow self-center relative mt-7">
+            <div class="max-w-8xl mx-auto p-10">
+                <div class="bg-gray-100 rounded-lg mt-4 shadow-2xl hover:bg-gray-300 transition-all" id="wall">
+                    {{range $index, $element := .}}
+                    <h2 class="text-lite font-semibold text-center py-4" id="name" onclick="redirectToCity('{{.Name}}')"></h2>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+
+        <script>
+        </script>
     </div>
+
 
     <div class="w-1/6 mx-4">
         <h2 class="text-lg font-semibold mb-2"></h2>

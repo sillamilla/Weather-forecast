@@ -1,7 +1,7 @@
-package weather_client
+package forecast_client
 
 import (
-	"Weather/pkg/weather_client/models"
+	"Weather/pkg/forecast_client/models"
 	"encoding/json"
 	"net/url"
 	"strconv"
@@ -13,10 +13,11 @@ func (c *Client) FindLocation(city string) ([]models.GeoLocation, error) {
 		return nil, err
 	}
 
-	url.Query().Add("appid", c.apiToken)
-	url.Query().Add("q", city)
-	url.Query().Add("limit", "5")
-	url.RawQuery = url.Query().Encode()
+	query := url.Query()
+	query.Add("appid", c.apiToken)
+	query.Add("q", city)
+	query.Add("limit", "5")
+	url.RawQuery = query.Encode()
 
 	body, err := c.get(url.String())
 	if err != nil {
@@ -40,10 +41,11 @@ func (c *Client) WeatherStatus(geoLocation models.GeoLocation) (models.WeatherIn
 	latStr := strconv.FormatFloat(geoLocation.Lat, 'f', 6, 64)
 	lonStr := strconv.FormatFloat(geoLocation.Lon, 'f', 6, 64)
 
-	url.Query().Add("appid", c.apiToken)
-	url.Query().Add("lat", latStr)
-	url.Query().Add("lon", lonStr)
-	url.RawQuery = url.Query().Encode()
+	query := url.Query()
+	query.Add("appid", c.apiToken)
+	query.Add("lat", latStr)
+	query.Add("lon", lonStr)
+	url.RawQuery = query.Encode()
 
 	body, err := c.get(url.String())
 	if err != nil {

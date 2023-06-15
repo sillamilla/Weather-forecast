@@ -2,8 +2,9 @@ package ui
 
 import (
 	"Weather/internal/models"
+	"Weather/internal/repository/users"
 	"Weather/internal/service"
-	models2 "Weather/pkg/weather_client/models"
+	models2 "Weather/pkg/forecast_client/models"
 	"fmt"
 	"html/template"
 	"log"
@@ -11,11 +12,12 @@ import (
 )
 
 type Handler struct {
+	rp   users.UserRepo
 	srv  service.Service
 	home *template.Template
 }
 
-func NewHandler(service service.Service) Handler {
+func NewHandler(service service.Service, rp users.UserRepo) Handler {
 	home, err := template.ParseFiles("./internal/templates/homePage.html")
 	if err != nil {
 		panic(err)
@@ -23,12 +25,17 @@ func NewHandler(service service.Service) Handler {
 	return Handler{
 		srv:  service,
 		home: home,
+		rp:   rp,
 	}
 }
 
 func (h Handler) MainPageProcess(w http.ResponseWriter, r *http.Request) {
+	cityName := r.URL.Query().Get("name")
+	if cityName == "" {
+		cityName = "London"
+	}
 	userRequest := models.UserRequest{
-		City: "London",
+		City: cityName,
 	}
 
 	locations, err := h.srv.LocationSrv.FiendLocation(userRequest)

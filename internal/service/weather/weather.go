@@ -1,10 +1,8 @@
 package weather
 
 import (
-	"Weather/internal/config"
-	"Weather/pkg/weather_client/models"
-	"Weather/pkg/weather_client"
-	"os"
+	"Weather/pkg/forecast_client"
+	"Weather/pkg/forecast_client/models"
 )
 
 type Service interface {
@@ -12,25 +10,18 @@ type Service interface {
 }
 
 type weatherService struct {
-	openWeatherClient weatherThirdPartyService
+	client forecast_client.Client
 }
 
-type weatherThirdPartyService interface {
-	FindLocation(city string) ([]models.GeoLocation, error)
-	WeatherStatus(geoLocation models.GeoLocation) (models.WeatherInfo, error)
+func NewWeatherService(client forecast_client.Client) Service {
+	return weatherService{client: client}
 }
-
-func NewWeatherService(service weatherThirdPartyService) Service {
-	return weatherService{
-		openWeatherClient: service,
-	}
-}
-
-var key = os.Getenv("key")
-
-//todo key
 
 func (ws weatherService) WeatherStatus(geoLocation models.GeoLocation) (models.WeatherInfo, error) {
-	weatherInfo, err :=
-	return weatherInfo, err
+	weatherInfo, err := ws.client.WeatherStatus(geoLocation)
+	if err != nil {
+		return weatherInfo, err
+	}
+
+	return weatherInfo, nil
 }

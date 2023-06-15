@@ -1,4 +1,4 @@
-package weather_client
+package forecast_client
 
 import (
 	"io"
