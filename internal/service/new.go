@@ -2,7 +2,6 @@ package service
 
 import (
 	"Weather/internal/config"
-	"Weather/internal/repository"
 	"Weather/internal/service/location"
 	"Weather/internal/service/user"
 	"Weather/internal/service/weather"
@@ -15,11 +14,11 @@ type Service struct {
 	WeatherSrv  weather.Service
 }
 
-func New(cfg config.Config, repo *repository.Repo) *Service {
+func New(cfg config.Config) *Service {
 	client := forecast_client.NewClient(cfg.WeatherApiUrl, cfg.WeatherApiToken)
 
 	return &Service{
-		UserSrv:     user.NewUserService(repo.UserSrv),
+		UserSrv:     user.NewUserService(*client),
 		LocationSrv: location.NewLocationService(*client),
 		WeatherSrv:  weather.NewWeatherService(*client),
 	}

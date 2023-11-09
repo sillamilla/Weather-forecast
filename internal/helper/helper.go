@@ -2,8 +2,6 @@ package helper
 
 import (
 	models2 "Weather/pkg/forecast_client/models"
-	"github.com/google/uuid"
-	"net/http"
 )
 
 func SameCheck(locationsInfo []models2.GeoLocation) []models2.GeoLocation {
@@ -21,23 +19,15 @@ func SameCheck(locationsInfo []models2.GeoLocation) []models2.GeoLocation {
 	return location
 }
 
-func GenerateAndSetCookie(w http.ResponseWriter) string {
-	cookieValue := uuid.New().String()
-
-	cookie := http.Cookie{
-		Name:  "user",
-		Value: cookieValue,
-	}
-
-	http.SetCookie(w, &cookie)
-	return cookie.Value
-}
-
-func GetCookie(r *http.Request) (string, error) {
-	cookie, err := r.Cookie("user")
-	if cookie == nil {
-		return "", err
-	}
-
-	return cookie.Value, nil
-}
+//func GetPinedLocations(w http.ResponseWriter, r *http.Request) (string, error) {
+//	cookie, err := r.Cookie("location")
+//	if err != nil {
+//		if errors.Is(err, http.ErrNoCookie) {
+//			return "", nil
+//		} else {
+//			return "", err
+//		}
+//	}
+//
+//	return cookie.Value, err
+//}
